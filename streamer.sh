@@ -3,6 +3,9 @@
 # * youtube streaming key
 VIDEO_OUTPUT=$HOME/Videos/video.mp4
 
+# wait for desktop to settle
+sleep 5
+
 gst-launch-1.0 -v -e ximagesrc use-damage=0 \
   ! video/x-raw,framerate=30/1 \
   ! queue \
