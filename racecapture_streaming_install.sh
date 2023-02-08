@@ -20,7 +20,12 @@ echo Downloading latest racecapture
 wget -q --show-progress -c $RACECAPTURE_DOWNLOAD -O - | tar -xjp
 
 echo Download livestreaming scripts
-wget 
+mkdir -p $HOME/streamer
+pushd .
+cd $HOME/streamer
+wget -O streamer.sh https://raw.githubusercontent.com/autosportlabs/racecapture_video_data_livestreaming/main/streamer.sh
+chmod +x streamer.sh
+popd
 echo Configuring auto-start for racecapture and streaming
 {
         echo "exec /bin/bash -c 'cd ~/racecapture && ./run_racecapture_linux.sh >> ~/racecapture.log'"
