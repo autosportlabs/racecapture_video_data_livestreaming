@@ -28,7 +28,7 @@ chmod +x streamer.sh
 popd
 echo Configuring auto-start for racecapture and streaming
 {
-        echo "exec /bin/bash -c 'cd ~/racecapture && ./run_racecapture_linux.sh >> ~/racecapture.log'"
+        echo "exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log'"
         echo "exec $HOME/streamer/streamer.sh"
 } > ~/.ratpoisonrc
 
