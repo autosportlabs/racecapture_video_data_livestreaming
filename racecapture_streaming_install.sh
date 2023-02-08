@@ -17,13 +17,14 @@ rm -rf racecapture_old
 [ -d racecapture ] && mv racecapture racecapture_old
 
 echo Downloading latest racecapture
-# download RaceCapture
 wget -q --show-progress -c $RACECAPTURE_DOWNLOAD -O - | tar -xjp
 
+echo Download livestreaming scripts
+wget 
 echo Configuring auto-start for racecapture and streaming
 {
         echo "exec /bin/bash -c 'cd ~/racecapture && ./run_racecapture_linux.sh >> ~/racecapture.log'"
-        echo "exec  
+        echo "exec $HOME/streamer/streamer.sh"
 } > ~/.ratpoisonrc
 
 echo Changing your window manager to single app mode
