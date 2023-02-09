@@ -1,10 +1,10 @@
 #TODO read settings from a config file:
 # * Video output directory
 # * youtube streaming key
-VIDEO_OUTPUT=$HOME/Videos/video.mp4
+VIDEO_OUTPUT=$HOME/Videos/video%05d.mp4
 
 # wait for desktop to settle
-sleep 5
+sleep 0
 
 gst-launch-1.0 -v -e ximagesrc use-damage=0 \
   ! video/x-raw,framerate=30/1 \
@@ -14,11 +14,10 @@ gst-launch-1.0 -v -e ximagesrc use-damage=0 \
   ! queue \
   ! vaapih264enc \
   ! h264parse \
-  ! queue \
-  ! mp4mux name=mux \
-  ! filesink location=$VIDEO_OUTPUT alsasrc device="hw:3,0" \
+  ! mux. alsasrc device=hw:3,0 \
   ! queue \
   ! audioconvert \
-  ! queue \
-  ! lamemp3enc bitrate=192 \
-  ! mux.
+  ! voaacenc \
+  ! mux. mp4mux name=mux \
+  ! filesink location=$VIDEO_OUTPUT
+
