@@ -1,5 +1,7 @@
 #!/bin/bash
-RACECAPTURE_DOWNLOAD=https://www.dropbox.com/s/7gvbzsfdb9hllzb/racecapture_linux_x86_64_2.8.0.tar.bz2?dl=1
+
+RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.bz2'`
+RC_APP_FILENAME=`basename $RC_APP_URL`
 
 # install dependencies
 echo Installing additional packages
@@ -16,8 +18,8 @@ cd $HOME
 rm -rf racecapture_old
 [ -d racecapture ] && mv racecapture racecapture_old
 
-echo Downloading latest racecapture
-wget -q --show-progress -c $RACECAPTURE_DOWNLOAD -O - | tar -xjp
+echo "Installing RC App '$RC_APP_FILENAME'"
+wget -q --show-progress -c "$RC_APP_URL" -O - | tar -xjp
 
 echo Download livestreaming scripts
 mkdir -p $HOME/streamer
