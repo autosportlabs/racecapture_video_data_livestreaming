@@ -13,11 +13,17 @@ echo Enabling access to USB
 sudo adduser $USER dialout >/dev/null 2>&1
 sudo echo "ATTRS{idVendor}==16d0, ATTRS{idProduct}==07f1, MODE=0666" | sudo tee /etc/udev/rules.d/70-autosportlabs.racecapture.rules >/dev/null 2>&1
 
-echo Saving old racecapture installation as racecapture_old
+# The commands below assume we're in $HOME so just change directories now
 cd $HOME
-rm -rf racecapture_old
-[ -d racecapture ] && mv racecapture racecapture_old
 
+# Move the current RC directory if it exists
+if [ -d racecapture ] ; then
+  echo "Saving old racecapture installation as racecapture_old"
+  rm -rf racecapture_old
+  mv racecapture racecapture_old
+fi
+
+# Download and decompress the RC App bundle
 echo "Installing RC App '$RC_APP_FILENAME'"
 wget -q --show-progress -c "$RC_APP_URL" -O - | tar -xjp
 
