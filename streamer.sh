@@ -2,22 +2,21 @@
 # * Video output directory
 # * youtube streaming key
 VIDEO_OUTPUT=$HOME/Videos/video%05d.mp4
+AUDIO_DEVICE=hw:4,0
 
 # wait for desktop to settle
 sleep 0
 
-gst-launch-1.0 -v -e ximagesrc use-damage=0 \
-  ! video/x-raw,framerate=30/1 \
-  ! queue \
-  ! videoconvert \
-  ! videorate \
-  ! queue \
-  ! vaapih264enc \
-  ! h264parse \
-  ! mux. alsasrc device=hw:3,0 \
-  ! queue \
-  ! audioconvert \
-  ! voaacenc \
-  ! mux. mp4mux name=mux \
-  ! filesink location=$VIDEO_OUTPUT
-
+gst-launch-1.0 -e splitmuxsink name=mux location=$VIDEO_OUTPUT max-size-bytes=2147483648 \
+        ximagesrc use-damage=0 \
+        ! 'video/x-raw,framerate=30/1' \
+        ! queue \
+        ! videoconvert \
+        ! vaapih264enc \
+        ! h264parse \
+        ! mux.video \
+        alsasrc device=$AUDIO_DEVICE \
+        ! queue \
+        ! audioconvert \
+        ! voaacenc \
+        ! mux.audio_0
