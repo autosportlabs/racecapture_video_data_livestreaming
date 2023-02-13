@@ -40,10 +40,31 @@ popd
 
 echo "Configuring auto-start for racecapture and streaming"
 cat > ~/.ratpoisonrc <<'EOF'
+## Disable the message in the upper right
+set startupmessage 0
+## Force the cursor to the lower right when RC starts up
+addhook newwindow banish
+## Kill gst-launch politely so the file will close properly
+addhook quit exec killall -w -s SIGINT gst-launch-1.0
+
+## Make it so that 'ctrl-t q' quits
+bind q quit
+
+## Set the cursor to the left pointer
+exec xsetroot -cursor_name left_ptr
+
+## Disable screen saver/blanking/etc
 exec gsettings set org.gnome.desktop.session idle-delay 0
 exec gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
 exec gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+exec xset s off
+exec xset s noblank
+exec xset -dpms
+
+## Start RC APP
 exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log 2>&1'
+
+## Start the video capture/streaming
 exec $HOME/streamer/streamer.sh >> ~/streamer.log 2>&1
 EOF
 
