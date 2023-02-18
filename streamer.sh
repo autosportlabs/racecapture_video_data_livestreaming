@@ -2,7 +2,7 @@
 # * Video output directory
 # * youtube streaming key
 VIDEO_OUTPUT=$HOME/Videos/video%05d.mp4
-AUDIO_DEVICE=hw:4,0
+AUDIO_DEVICE=hw:0,0
 
 # wait for desktop to settle
 sleep 0
