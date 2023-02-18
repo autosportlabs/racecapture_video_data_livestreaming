@@ -24,7 +24,7 @@ mkdir -p ${VIDEOS_DIR}
 VIDEO_OUTPUT=$VIDEOS_DIR/video%05d.mp4
 
 # wait for desktop to settle
-sleep 0
+sleep 4
 
 gst-launch-1.0 -e splitmuxsink name=mux location=$VIDEO_OUTPUT max-size-time=$MAX_SIZE_TIME \
         ximagesrc use-damage=0 \
