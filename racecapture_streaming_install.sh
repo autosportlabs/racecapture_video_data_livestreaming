@@ -44,11 +44,9 @@ cat > ~/.ratpoisonrc <<'EOF'
 set startupmessage 0
 ## Force the cursor to the lower right when RC starts up
 addhook newwindow banish
-## Kill gst-launch politely so the file will close properly
-addhook quit exec killall -w -s SIGINT gst-launch-1.0
 
 ## Make it so that 'ctrl-t q' quits
-bind q quit
+bind q exec bash -c "killall -w -s SIGINT video-streamer && ratpoison -c quit"
 
 ## Set the cursor to the left pointer
 exec xsetroot -cursor_name left_ptr
