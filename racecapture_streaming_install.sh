@@ -46,7 +46,7 @@ set startupmessage 0
 addhook newwindow banish
 
 ## Make it so that 'ctrl-t q' quits
-bind q exec bash -c "killall -w -s SIGINT video-streamer && ratpoison -c quit"
+bind q exec bash -c "killall -w -s SIGINT gst-launch-1.0 ; sleep 1; ratpoison -c quit"
 
 ## Set the cursor to the left pointer
 exec xsetroot -cursor_name left_ptr
