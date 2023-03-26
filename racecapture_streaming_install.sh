@@ -2,6 +2,8 @@
 
 RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.bz2'`
 RC_APP_FILENAME=`basename $RC_APP_URL`
+VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.bz2'`
+VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
 
 # install dependencies
 echo "Installing additional packages"
@@ -30,13 +32,15 @@ fi
 echo "Installing RC App '$RC_APP_FILENAME'"
 wget -q --show-progress -c "$RC_APP_URL" -O - | tar -xjp
 
-echo "Download livestreaming scripts"
-mkdir -p $HOME/streamer
-pushd .
-cd $HOME/streamer
-wget -q -O streamer.sh https://raw.githubusercontent.com/autosportlabs/racecapture_video_data_livestreaming/main/streamer.sh
-chmod +x streamer.sh
-popd
+# Move the current vstreamer directory if it exists
+if [ -d video-streamer ] ; then
+  echo "Saving old video-streamer installation as video-streamer_old"
+  rm -rf video-streamer_old
+  mv video-streamer video-streamer_old
+fi
+echo "Installing Video Streamer App '$VSTREAMER_FILENAME'"
+wget -q --show-progress -c "$VSTREAMER_URL" -O - | tar -xjp
+
 
 echo "Configuring auto-start for racecapture and streaming"
 cat > ~/.ratpoisonrc <<'EOF'
@@ -46,7 +50,7 @@ set startupmessage 0
 addhook newwindow banish
 
 ## Make it so that 'ctrl-t q' quits
-bind q exec bash -c "killall -w -s SIGINT gst-launch-1.0 ; ratpoison -c quit"
+bind q exec bash -c "killall -w -s SIGINT video-streamer; ratpoison -c quit"
 
 ## Set the cursor to the left pointer
 exec xsetroot -cursor_name left_ptr
@@ -60,10 +64,10 @@ exec xset s noblank
 exec xset -dpms
 
 ## Start RC APP
-exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log 2>&1'
+exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log 2>&1' &
 
 ## Start the video capture/streaming
-exec $HOME/streamer/streamer.sh >> ~/streamer.log 2>&1
+exec $HOME/video-streamer/video-streamer >> ~/video-streamer.log 2>&1 &
 EOF
 
 echo "Changing your window manager to single app mode"
