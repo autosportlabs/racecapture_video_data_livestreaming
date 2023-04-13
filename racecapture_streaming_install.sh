@@ -8,7 +8,7 @@ VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
 # install dependencies
 echo "Installing additional packages"
 sudo apt-get -qq update
-sudo apt-get -y -qq install v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
+sudo apt-get -y -qq install intel-media-va-driver-non-free v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
 
 # enable access to RaceCapture USB and other /dev files
 echo "Enabling access to system devices"
