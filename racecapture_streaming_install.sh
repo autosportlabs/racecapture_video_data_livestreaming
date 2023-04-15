@@ -72,7 +72,7 @@ EOF
 
 sudo sh -c "cat > /usr/share/xsessions/racecapture.desktop <<'EOF'
 [Desktop Entry]
-Name=RaceCapture fullscreen
+Name=RaceCapture video+data streamer
 Comment=This session logs you into Ratpoison
 Exec=/usr/bin/ratpoison
 TryExec=/usr/bin/ratpoison
@@ -83,4 +83,4 @@ EOF
 "
 
 echo "Changing your window manager to single app mode"
-sudo sed -i "s/Session=.*/Session=ratpoison/g" /var/lib/AccountsService/users/$USER
+sudo sed -i "s/Session=.*/Session=racecapture/g" /var/lib/AccountsService/users/$USER
