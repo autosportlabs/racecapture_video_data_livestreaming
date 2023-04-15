@@ -67,8 +67,20 @@ exec xset -dpms
 exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log 2>&1' &
 
 ## Start the video capture/streaming
-exec $HOME/video-streamer/video-streamer >> ~/video-streamer.log 2>&1 &
+exec /bin/bash -c 'cd ~/video-streamer && ./start-video-streamer.sh -w 1 2>&1' &
 EOF
 
+sudo sh -c "cat > /usr/share/xsessions/racecapture.desktop <<'EOF'
+[Desktop Entry]
+Name=RaceCapture video+data streamer
+Comment=This session logs you into Ratpoison
+Exec=/usr/bin/ratpoison
+TryExec=/usr/bin/ratpoison
+Icon=
+Type=Application
+X-Ubuntu-Gettext-Domain=ratpoison-session
+EOF
+"
+
 echo "Changing your window manager to single app mode"
-sudo sed -i "s/Session=.*/Session=ratpoison/g" /var/lib/AccountsService/users/$USER
+sudo sed -i "s/Session=.*/Session=racecapture/g" /var/lib/AccountsService/users/$USER
