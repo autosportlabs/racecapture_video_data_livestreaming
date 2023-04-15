@@ -1,14 +1,14 @@
 #!/bin/bash
 
+# install dependencies
+echo "Installing additional packages"
+sudo apt-get -qq update
+sudo apt-get -y -qq install intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
+
 RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.bz2'`
 RC_APP_FILENAME=`basename $RC_APP_URL`
 VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.bz2'`
 VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
-
-# install dependencies
-echo "Installing additional packages"
-sudo apt-get -qq update
-sudo apt-get -y -qq install intel-media-va-driver-non-free v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
 
 # enable access to RaceCapture USB and other /dev files
 echo "Enabling access to system devices"
