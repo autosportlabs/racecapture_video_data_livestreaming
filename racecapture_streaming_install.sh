@@ -41,6 +41,19 @@ fi
 echo "Installing Video Streamer App '$VSTREAMER_FILENAME'"
 wget -q --show-progress -c "$VSTREAMER_URL" -O - | tar -xjp
 
+if [ ! -f ~/Desktop/video-config.ini ] ; then
+  echo "Adding default video-config.ini file for configuring streaming and recording settings"
+  cat > ~/Desktop/video-config.ini <<'EOF'
+[capture]
+audio_device=1
+
+[local_recording]
+video_dir=$HOME/Videos
+
+[streaming]
+streaming_url=rtmp://a.rtmp.youtube.com/live2/<streaming key>
+EOF
+fi
 
 echo "Configuring auto-start for racecapture and streaming"
 cat > ~/.ratpoisonrc <<'EOF'
