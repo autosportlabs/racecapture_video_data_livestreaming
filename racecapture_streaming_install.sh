@@ -3,9 +3,9 @@
 # install dependencies
 echo "Installing additional packages"
 sudo apt-get -qq update
-sudo apt-get -y -qq install intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
+sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
 
-RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.bz2'`
+RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.deb'`
 RC_APP_FILENAME=`basename $RC_APP_URL`
 VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.bz2'`
 VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
@@ -21,16 +21,12 @@ sudo echo "ATTRS{idVendor}==16d0, ATTRS{idProduct}==07f1, MODE=0666" | sudo tee 
 # The commands below assume we're in $HOME so just change directories now
 cd $HOME
 
-# Move the current RC directory if it exists
-if [ -d racecapture ] ; then
-  echo "Saving old racecapture installation as racecapture_old"
-  rm -rf racecapture_old
-  mv racecapture racecapture_old
-fi
-
-# Download and decompress the RC App bundle
+# Download the RC app installer
 echo "Installing RC App '$RC_APP_FILENAME'"
-wget -q --show-progress -c "$RC_APP_URL" -O - | tar -xjp
+wget -q --show-progress -c "$RC_APP_URL"
+
+# install RC app, with cleanup
+sudo dpkg -i $RC_APP_FILENAME && rm $RC_APP_FILENAME
 
 # Move the current vstreamer directory if it exists
 if [ -d video-streamer ] ; then
@@ -77,7 +73,7 @@ exec xset s noblank
 exec xset -dpms
 
 ## Start RC APP
-exec /bin/bash -c 'cd ~/racecapture && LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 ./race_capture >> ~/racecapture.log 2>&1' &
+exec /bin/bash -c 'cd /opt/racecapture && ./race_capture --size=1920x1080 >> ~/racecapture.log 2>&1' &
 
 ## Start the video capture/streaming
 exec /bin/bash -c 'cd ~/video-streamer && ./start-video-streamer.sh -w 1 2>&1' &
