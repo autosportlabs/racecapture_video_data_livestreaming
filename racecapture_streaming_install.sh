@@ -21,11 +21,12 @@ sudo echo "ATTRS{idVendor}==16d0, ATTRS{idProduct}==07f1, MODE=0666" | sudo tee 
 # The commands below assume we're in $HOME so just change directories now
 cd $HOME
 
-# Download and decompress the RC App bundle
+# Download the RC app installer
 echo "Installing RC App '$RC_APP_FILENAME'"
 wget -q --show-progress -c "$RC_APP_URL" -O -
 
-sudo dpkg -i $RC_APP_FILENAME
+# install RC app, with cleanup
+sudo dpkg -i $RC_APP_FILENAME && rm $RC_APP_FILENAME
 
 # Move the current vstreamer directory if it exists
 if [ -d video-streamer ] ; then
