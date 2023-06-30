@@ -7,7 +7,7 @@ sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-d
 
 RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.deb'`
 RC_APP_FILENAME=`basename $RC_APP_URL`
-VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.bz2'`
+VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.deb'`
 VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
 
 # enable access to RaceCapture USB and other /dev files
@@ -28,14 +28,8 @@ wget -q --show-progress -c "$RC_APP_URL"
 # install RC app, with cleanup
 sudo dpkg -i $RC_APP_FILENAME && rm $RC_APP_FILENAME
 
-# Move the current vstreamer directory if it exists
-if [ -d video-streamer ] ; then
-  echo "Saving old video-streamer installation as video-streamer_old"
-  rm -rf video-streamer_old
-  mv video-streamer video-streamer_old
-fi
 echo "Installing Video Streamer App '$VSTREAMER_FILENAME'"
-wget -q --show-progress -c "$VSTREAMER_URL" -O - | tar -xjp
+wget -q --show-progress -c "$VSTREAMER_URL"
 
 if [ ! -f ~/Desktop/video-config.ini ] ; then
   echo "Adding default video-config.ini file for configuring streaming and recording settings"
@@ -45,6 +39,7 @@ audio_device=1
 
 [local_recording]
 video_dir=$HOME/Videos
+segment_length_sec=60
 
 [streaming]
 streaming_url=rtmp://a.rtmp.youtube.com/live2/<streaming key>
@@ -76,7 +71,7 @@ exec xset -dpms
 exec /bin/bash -c 'cd /opt/racecapture && ./race_capture --size=1920x1080 >> ~/racecapture.log 2>&1' &
 
 ## Start the video capture/streaming
-exec /bin/bash -c 'cd ~/video-streamer && ./start-video-streamer.sh -w 1 2>&1' &
+exec /bin/bash -c 'cd /opt/video-streamer && ./start-video-streamer.sh -w 1 2>&1' &
 EOF
 
 sudo sh -c "cat > /usr/share/xsessions/racecapture.desktop <<'EOF'
