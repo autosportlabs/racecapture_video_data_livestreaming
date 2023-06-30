@@ -31,6 +31,10 @@ sudo dpkg -i $RC_APP_FILENAME && rm $RC_APP_FILENAME
 echo "Installing Video Streamer App '$VSTREAMER_FILENAME'"
 wget -q --show-progress -c "$VSTREAMER_URL"
 
+# install video-streamer, with cleanup
+sudo dpkg -i $VSTREAMER_FILENAME && rm $VSTREAMER_FILENAME
+
+
 if [ ! -f ~/Desktop/video-config.ini ] ; then
   echo "Adding default video-config.ini file for configuring streaming and recording settings"
   cat > ~/Desktop/video-config.ini <<'EOF'
