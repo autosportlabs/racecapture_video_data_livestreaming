@@ -5,10 +5,10 @@ echo "Installing additional packages"
 sudo apt-get -qq update
 sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
 
-RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.deb'`
-RC_APP_FILENAME=`basename $RC_APP_URL`
-VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.deb'`
-VSTREAMER_FILENAME=`basename $VSTREAMER_URL`
+RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.deb[^"]*'`
+RC_APP_FILENAME=`basename "$RC_APP_URL" | sed 's/\?.*//'`
+VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.deb[^"]*'`
+VSTREAMER_FILENAME=`basename "$VSTREAMER_URL" | sed 's/\?.*//'`
 
 # enable access to RaceCapture USB and other /dev files
 echo "Enabling access to system devices"
@@ -23,13 +23,13 @@ cd $HOME
 
 # Download the RC app installer
 echo "Installing RC App '$RC_APP_FILENAME'"
-wget -q --show-progress -c "$RC_APP_URL"
+wget -q --progress=bar --show-progress "$RC_APP_URL" -O "$RC_APP_FILENAME"
 
 # install RC app, with cleanup
 sudo dpkg -i $RC_APP_FILENAME && rm $RC_APP_FILENAME
 
 echo "Installing Video Streamer App '$VSTREAMER_FILENAME'"
-wget -q --show-progress -c "$VSTREAMER_URL"
+wget -q --progress=bar --show-progress "$VSTREAMER_URL" -O "$VSTREAMER_FILENAME"
 
 # install video-streamer, with cleanup
 sudo dpkg -i $VSTREAMER_FILENAME && rm $VSTREAMER_FILENAME
