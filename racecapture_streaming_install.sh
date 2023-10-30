@@ -72,7 +72,7 @@ exec xset s noblank
 exec xset -dpms
 
 ## Start RC APP
-exec /bin/bash -c 'cd /opt/racecapture && ./race_capture --size=1920x1080 >> ~/racecapture.log 2>&1' &
+exec /bin/bash -c "mkdir -p ~/logs; cd /opt/racecapture && ./race_capture --size=1920x1080 >> ~/logs/racecapture_app_$(date +"%Y-%m-%dT%T.%3N").log 2>&1" &
 
 ## Start the video capture/streaming
 exec /bin/bash -c 'cd /opt/video-streamer && ./start-video-streamer.sh -w 1 2>&1' &
