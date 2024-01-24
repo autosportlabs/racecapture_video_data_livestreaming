@@ -3,11 +3,13 @@
 # install dependencies
 echo "Installing additional packages"
 sudo apt-get -qq update
-sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison
+sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison jq
 
-RC_APP_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*racecapture_linux_x86_64[^"]*.deb[^"]*' | python3 -c 'import html, sys; [print(html.unescape(l), end="") for l in sys.stdin]'`
+RC_APP_ID=`curl -s 'https://podium.live/api/v1/applications.json?expand=1' | jq -r '.applications[] | select(.name == "racecaptureapp") | .id'`
+RC_APP_URL=`curl -s "https://podium.live/api/v1/applications/$RC_APP_ID/latest.json?expand=1&platform=linux" | jq -r .release.url`
 RC_APP_FILENAME=`basename "$RC_APP_URL" | sed 's/\?.*//'`
-VSTREAMER_URL=`curl -s https://podium.live/software | grep -Po '(?<=<a href=")[^"]*video-streamer_linux_x86_64[^"]*.deb[^"]*' | python3 -c 'import html, sys; [print(html.unescape(l), end="") for l in sys.stdin]'`
+VSTREAMER_APP_ID=`curl -s 'https://podium.live/api/v1/applications.json?expand=1' | jq -r '.applications[] | select(.name == "video-streamer") | .id'`
+VSTREAMER_URL=`curl -s "https://podium.live/api/v1/applications/$VSTREAMER_APP_ID/latest.json?expand=1&platform=linux" | jq -r .release.url`
 VSTREAMER_FILENAME=`basename "$VSTREAMER_URL" | sed 's/\?.*//'`
 
 # enable access to RaceCapture USB and other /dev files
