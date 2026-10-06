@@ -5,11 +5,36 @@ echo "Installing additional packages"
 sudo apt-get -qq update
 sudo apt-get -y -qq install mesa-utils libegl1-mesa mtdev-tools intel-media-va-driver-non-free curl v4l-utils tk gstreamer1.0-plugins-bad gstreamer1.0-libav gconf2 gnome-shell-extensions ratpoison jq
 
-RC_APP_ID=`curl -s 'https://podium.live/api/v1/applications.json?expand=1' | jq -r '.applications[] | select(.name == "racecaptureapp") | .id'`
-RC_APP_URL=`curl -s "https://podium.live/api/v1/applications/$RC_APP_ID/latest.json?expand=1&platform=linux" | jq -r .release.url`
+echo "Fetching RC Software Info"
+SW_JSON=`curl -s "https://software.autosportlabs.com/api/downloads"`
+if [ $? -ne 0 ]; then
+	echo "Error: Could not fetch the RC Software Info." >&2
+	exit 1
+fi
+RC_APP_URL=`echo $SW_JSON | jq -r '.software[] | select(.name == "racecaptureapp").downloads[] | select(.platformName == "linux").url'`
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to parse RC Sofware Info." >&2
+	exit 1
+fi
+
+#Check if the variable is empty (e.g., if the platform or app wasn't found)
+if [ -z "$RC_APP_URL" ] || [ "$RC_APP_URL" == "null" ]; then
+	echo "Error: Could not find the RC App URL." >&2
+	exit 1
+fi
 RC_APP_FILENAME=`basename "$RC_APP_URL" | sed 's/\?.*//'`
-VSTREAMER_APP_ID=`curl -s 'https://podium.live/api/v1/applications.json?expand=1' | jq -r '.applications[] | select(.name == "video-streamer") | .id'`
-VSTREAMER_URL=`curl -s "https://podium.live/api/v1/applications/$VSTREAMER_APP_ID/latest.json?expand=1&platform=linux" | jq -r .release.url`
+
+VSTREAMER_URL=`echo $SW_JSON | jq -r '.software[] | select(.name == "video-streamer").downloads[] | select(.platformName == "linux").url'`
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to parse RC Sofware Info." >&2
+	exit 1
+fi
+
+#Check if the variable is empty (e.g., if the platform or app wasn't found)
+if [ -z "$VSTREAMER_URL" ] || [ "$VSTREAMER_URL" == "null" ]; then
+	echo "Error: Could not find the Video Stream URL." >&2
+	exit 1
+fi
 VSTREAMER_FILENAME=`basename "$VSTREAMER_URL" | sed 's/\?.*//'`
 
 # enable access to RaceCapture USB and other /dev files
